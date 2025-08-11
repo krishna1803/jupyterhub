@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyterhub-manager-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyterhub-manager-api
+  template:
+    metadata:
+      labels:
+        app: jupyterhub-manager-api
+    spec:
+      containers:
+        - name: api
+          image: your-registry/jupyterhub-manager-api:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JUPYTERHUB_MANAGER_JUPYTERHUB_URL
+              value: "https://hub.example.com"
+            - name: JUPYTERHUB_MANAGER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: jhub-admin-token
+                  key: token
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyterhub-manager-api
+spec:
+  selector:
+    app: jupyterhub-manager-api
+  ports:
+    - port: 80
+      targetPort: 8080

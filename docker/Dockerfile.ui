@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY pyproject.toml README.md /app/
+RUN pip install --no-cache-dir streamlit httpx pydantic
+COPY jupyterhub_manager /app/jupyterhub_manager
+EXPOSE 8501
+CMD ["streamlit", "run", "jupyterhub_manager/ui/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

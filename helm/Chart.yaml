@@ -1,0 +1,16 @@
+apiVersion: v2
+name: jupyterhub-manager
+description: A Helm chart for JupyterHub Manager
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - jupyterhub
+  - admin
+  - management
+home: https://github.com/your-org/jupyterhub-manager
+sources:
+  - https://github.com/your-org/jupyterhub-manager
+maintainers:
+  - name: Your Name
+    email: you@example.com

@@ -1,0 +1,98 @@
+# Default values for jupyterhub-manager.
+replicaCount: 1
+
+image:
+  api:
+    repository: your-registry/jupyterhub-manager-api
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  ui:
+    repository: your-registry/jupyterhub-manager-ui
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  jupyterhubUrl: "https://your-hub.example.com"
+  verifySSL: true
+  requestTimeout: 30
+
+secret:
+  # Create a secret with your JupyterHub admin token
+  apiToken: "your-admin-token"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  api:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+  ui:
+    type: ClusterIP
+    port: 80
+    targetPort: 8501
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: jhub-manager-api.local
+      paths:
+        - path: /
+          pathType: Prefix
+          service: api
+    - host: jhub-manager-ui.local
+      paths:
+        - path: /
+          pathType: Prefix
+          service: ui
+  tls: []
+
+resources:
+  api:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  ui:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+healthCheck:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3

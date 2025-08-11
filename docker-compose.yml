@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8080:8080"
+    environment:
+      - JUPYTERHUB_MANAGER_JUPYTERHUB_URL=https://your-hub.example.com
+      - JUPYTERHUB_MANAGER_API_TOKEN=your-admin-api-token
+      - JUPYTERHUB_MANAGER_VERIFY_SSL=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ui
+    ports:
+      - "8501:8501"
+    environment:
+      - JUPYTERHUB_MANAGER_JUPYTERHUB_URL=https://your-hub.example.com
+      - JUPYTERHUB_MANAGER_API_TOKEN=your-admin-api-token
+      - JUPYTERHUB_MANAGER_VERIFY_SSL=true
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    name: jupyterhub-manager
